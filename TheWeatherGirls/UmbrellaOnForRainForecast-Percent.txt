@@ -1,0 +1,74 @@
+//This code will turn on the umbrella light when the forecast description contains a high percentage chance of rain.
+
+int i = 0;
+
+int led1 = D0; 
+int led2 = D7;
+int loopCount;
+
+void initialize() {
+
+  
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
+  loopCount=0;
+}
+
+int rainPerct[]= {50,10,80,30,100};
+
+
+void myHandler(const char *event, const char *data)
+{
+  i++;
+  Serial.print(i);
+  Serial.print(event);
+  Serial.print(", data: ");
+  if (data)
+    Serial.println(data);
+  else
+    Serial.println("NULL");
+}
+
+void setup()
+{ initialize();
+int i=0;
+
+  Particle.subscribe("forecast", myHandler);
+  Particle.publish("forecast", "Begin test!");
+ delay(1000); 
+  
+  for(i=0; i<=4;i++) {
+      if (rainPerct[i] >= 50) 
+{Particle.publish("forecast", "Strong chance of rain today. Bring your umbrella!");
+    delay(1000);
+    lightOn();
+    } 
+else {  Particle.publish("forecast", "No umbrella needed today!");}
+delay(4000);
+}
+Particle.publish("forecast","End test!");
+}
+
+
+void lightOn() {
+    
+if (loopCount < 3) {
+  // To blink the LED, first we'll turn it on...
+  digitalWrite(led1, HIGH);
+  digitalWrite(led2, HIGH);
+
+  // We'll leave it on for 1 second...
+  delay(500);
+
+  // Then we'll turn it off...
+  digitalWrite(led1, LOW);
+  digitalWrite(led2, LOW);
+ 
+
+  // Wait 1 second...
+  delay(400);
+  loopCount += 1; 
+ lightOn();
+  }
+loopCount=0;
+}

@@ -1,0 +1,106 @@
+
+//This code will turn on the light when the forecast description contains a word indicating rain.
+
+int i = 0;
+
+int led1 = D0; 
+int led2 = D7;
+int loopCount;
+
+void initialize() {
+
+  
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
+
+}
+
+char rainy='r';
+char cloudy='c';
+char overcast='o';
+char stormy='r';
+
+
+void myHandler(const char *event, const char *data)
+{
+  i++;
+  Serial.print(i);
+  Serial.print(event);
+  Serial.print(", data: ");
+  if (data)
+    Serial.println(data);
+  else
+    Serial.println("NULL");
+}
+
+void setup()
+{ initialize();
+
+  Particle.subscribe("forecast", myHandler);
+  Particle.publish("forecast","Begin test!");
+  delay(1000);
+  
+if (rainy=='r') 
+{
+    Particle.publish("forecast", "Bring your umbrella today! It will be rainy!");
+    delay(1000);
+    lightOn();
+} 
+else {  Particle.publish("forecast", "No umbrella needed today!");}
+delay(7000);
+
+if (cloudy=='r')
+ {
+    Particle.publish("forecast", "Bring your umbrella today!");
+    delay(1000);
+    lightOn();
+} 
+else {  Particle.publish("forecast", "No umbrella needed today!");}  
+delay(7000);
+
+if (overcast=='r')
+ {
+    Particle.publish("forecast", "Bring your umbrella today!fail2");
+    delay(1000);
+    lightOn();
+}   
+else {  Particle.publish("forecast", "No umbrella needed today!");}
+delay(7000);
+
+if (stormy=='r')
+ {
+    Particle.publish("forecast", "Bring your umbrella today! It will be stormy!");
+    delay(1000);
+    lightOn();
+}   
+else {  Particle.publish("forecast", "No umbrella needed today!");}
+delay(7000);
+
+Particle.publish("forecast","End test!");
+}
+
+
+
+void lightOn() {
+    
+if (loopCount < 3) {
+  // To blink the LED, first we'll turn it on...
+  digitalWrite(led1, HIGH);
+  digitalWrite(led2, HIGH);
+
+  // We'll leave it on for 1 second...
+  delay(500);
+
+  // Then we'll turn it off...
+  digitalWrite(led1, LOW);
+  digitalWrite(led2, LOW);
+ 
+
+  // Wait 1 second...
+  delay(400);
+  loopCount += 1; 
+ lightOn();
+  }
+loopCount=0;
+}
+
